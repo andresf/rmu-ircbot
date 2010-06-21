@@ -59,6 +59,7 @@ bot.plugin 'forum', :channel => ['#rmu-general'] do |m|
 end
 
 bot.plugin '!quit', :nick => 'locks' do
+	bot.privmsg( "I shall go... but I shall return!")
 	bot.quit
 	exit
 end
