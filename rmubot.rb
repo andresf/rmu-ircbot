@@ -5,8 +5,8 @@ require 'yaml'
 require 'json'
 
 @conf = YAML.load open('conf.yml') {|f| f.read }
-#URL = 'http://rmuapi.heroku.com/irc/log/insert'
-URL = 'http://localhost:9393/irc/log/insert'
+URL = 'http://rmuapi.heroku.com/irc/log/insert'
+#URL = 'http://localhost:9393/irc/log/insert'
 
 bot = Cinch.setup do
   server 'irc.freenode.org'
