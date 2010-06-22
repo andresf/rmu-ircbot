@@ -4,7 +4,7 @@ require 'rest_client'
 require 'yaml'
 require 'json'
 
-conf = YAML.load open('conf.yml') {|f| f.read }
+@conf = YAML.load open('conf.yml') {|f| f.read }
 #URL = 'http://rmuapi.heroku.com/irc/log/insert'
 URL = 'http://localhost:9393/irc/log/insert'
 
@@ -15,15 +15,15 @@ bot = Cinch.setup do
 end
 
 bot.on 376 do |m|
-  bot.join conf['channel'], conf['password']
+  bot.join @conf['channel'], @conf['password']
 end
 
 def update_db(m)
   r = RestClient.post(
     URL,
     :login => {
-      :key => conf['key'],
-      :secret => conf['secret']
+      :key => @conf['key'],
+      :secret => @conf['secret']
     },
     :msg => {
       :timestamp => Time.now,
@@ -66,7 +66,7 @@ bot.plugin 'forum', :channel => ['#rmu-general'] do |m|
   )
 end
 
-bot.plugin '!quit', :nick => 'locks' do
+bot.plugin '!stop', :nick => 'locks' do
 	bot.privmsg( "I shall go... but I shall return!")
 	bot.quit
 	exit
