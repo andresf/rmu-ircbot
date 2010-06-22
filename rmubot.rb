@@ -6,6 +6,7 @@ require 'json'
 require 'sequel'
 
 @conf = YAML.load open('conf.yml')
+ENV = 'PRO'
 
 bot = Cinch.setup do
   server 'irc.freenode.org'
@@ -14,12 +15,12 @@ bot = Cinch.setup do
 end
 
 bot.on 376 do |m|
-  bot.join @conf['channel'], @conf['password']
+  bot.join @conf[ENV]['channel'], @conf[ENV]['password']
 end
 
 def update_db(m)
       RestClient.post(
-        @conf['URL']['dev'],
+        @conf[ENV]['url'],
         :login => {
           :key => @conf['key'],
           :secret => @conf['secret']
