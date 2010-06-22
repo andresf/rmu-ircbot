@@ -3,10 +3,12 @@ require 'cinch'
 require 'rest_client'
 require 'yaml'
 require 'json'
+require 'sequel'
 
+@db = Sequel.connect 'sqlite://schema.db'
 @conf = YAML.load open('conf.yml') {|f| f.read }
-URL = 'http://rmuapi.heroku.com/irc/log/insert'
-#URL = 'http://localhost:9393/irc/log/insert'
+#URL = 'http://rmuapi.heroku.com/irc/log/insert'
+URL = 'http://localhost:9393/irc/log/insert'
 
 bot = Cinch.setup do
   server 'irc.freenode.org'
@@ -17,22 +19,27 @@ end
 bot.on 376 do |m|
   bot.join @conf['channel'], @conf['password']
 end
+r = RestClient.post('http://localhost:9393/irc/log/insert',:key=>'a',:secret=>'b',:timestamp=>'c',:nick=>'d',:text=>'e',:symbol=>'g')
 
 def update_db(m)
+  DB[:log].insert(
+    Time.now,
+    m.nick,
+    m.text,
+    m.symbol
+  )
+=begin
   r = RestClient.post(
     URL,
-    :login => {
-      :key => @conf['key'],
-      :secret => @conf['secret']
-    },
-    :msg => {
-      :timestamp => Time.now,
-      :nick => m.nick,
-      :text => m.text,
-      :symbol => m.symbol,
-      :accept => :json
-    }
+    :key => @conf['key'].to_s,
+    :secret => @conf['secret'].to_s,
+    :timestamp => Time.now,
+    :nick => m.nick,
+    :text => m.text,
+    :symbol => m.symbol,
+    :accept => :json
   )
+=end
 end
 
 bot.on :privmsg do |m|
