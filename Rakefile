@@ -1,4 +1,4 @@
-task :default => [:update_db]
+task :default => [:bot]
 
 task :update_db do
  `heroku db:push sqlite://log.db --force --app rmulog`
