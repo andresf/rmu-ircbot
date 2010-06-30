@@ -19,37 +19,35 @@ bot.on 376 do |m|
 end
 
 def update_db(m)
-      RestClient.post(
-        @conf[ENV]['url'],
-        :login => {
-          :key => @conf['key'],
-          :secret => @conf['secret']
-        },
-        :msg => {
-          :timestamp => Time.now,
-          :nick => m.nick,
-          :text => m.text,
-          :symbol => m.symbol
-        }
-      )
+  RestClient.post(
+    @conf[ENV]['url'],
+    :login => {
+      :key => @conf['key'],
+      :secret => @conf['secret']
+    },
+    :msg => {
+      :timestamp => Time.now,
+      :nick => m.nick,
+      :text => m.text,
+      :symbol => m.symbol
+    }
+  )
 end
 
 bot.on :privmsg do |m|
-  update_db(m) if m.nick != bot.nick
+  update_db(m)
 end
 
 bot.on :join do |m|
-  update_db(m) if m.nick != bot.nick
+  update_db(m)
 end
 
 bot.on :part do |m|
-  update_db(m) if m.nick != bot.nick
+  update_db(m)
 end
 
 bot.on :quit do |m|
-  puts m.nick
-  puts m.text
-  puts m.symbol.to_s
+  update_db(m)
 end
 
 bot.plugin 'site', :channel => ['#rmu-general'] do |m|
@@ -66,7 +64,7 @@ bot.plugin 'forum', :channel => ['#rmu-general'] do |m|
 end
 
 bot.plugin '!stop', :nick => 'locks' do
-	bot.privmsg( "I shall go... but I shall return!")
+	bot.privmsg( "I shall go... but I shall return!" )
 	bot.quit
 	exit
 end
