@@ -2,8 +2,6 @@ require 'rubygems'
 require 'cinch'
 require 'rest_client'
 require 'yaml'
-require 'json'
-require 'sequel'
 
 @conf = YAML.load open('conf.yml')
 ENV = 'PRO'
@@ -35,6 +33,10 @@ def update_db(m)
 end
 
 bot.on :privmsg do |m|
+  update_db(m)
+end
+
+bot.on :action do |m|
   update_db(m)
 end
 
