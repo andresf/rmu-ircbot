@@ -4,9 +4,9 @@ require 'rest_client'
 require 'yaml'
 
 @conf = YAML.load open('conf.yml')
-ENV = 'PRO'
+ENV = 'DEV'
 
-bot = Cinch.setup do
+bot = Cinch::Base.new do
   server 'irc.freenode.org'
 	nick   'babot'
 	verbose true
@@ -32,41 +32,58 @@ def update_db(m)
   )
 end
 
-bot.on :privmsg do |m|
-  update_db(m)
+def putA(m)
+  puts m.symbol
+  puts m.nick
+  puts m.raw
+  puts "---"
+  puts m.data.instance_variables
 end
 
-bot.on :action do |m|
-  update_db(m)
+bot.on :privmsg, :channel => ['#rmu-bot'] do |m|
+  puts "NNAADDAA"
+#  putA(m)
+end
+bot.on :privmsg do |m|
+  putA(m)
 end
 
 bot.on :join do |m|
-  update_db(m)
+  putA(m)
 end
 
 bot.on :part do |m|
-  update_db(m)
+  putA(m)
 end
 
 bot.on :quit do |m|
-  update_db(m)
+  putA(m)
 end
 
-bot.plugin 'site', :channel => ['#rmu-general'] do |m|
+bot.on :action do
+  puts "-a-a-a-a-a-a-a-"
+end
+
+@rules = Cinch::Rules.new
+
+@rules.add_callback('foo', Proc.new{})
+
+bot.rule 'site', :channel => ['#rmu-general'] do |m|
   bot.privmsg(
     m.nick,
     'http://seacreature.posterous.com/tag/rubymendicant'
   )
 end
-bot.plugin 'forum', :channel => ['#rmu-general'] do |m|
+
+bot.rule 'forum', :channel => ['#rmu-general'] do |m|
   bot.privmsg(
     m.nick,
     'http://groups.google.com/group/ruby-mendicant-university----general'
   )
 end
 
-bot.plugin '!stop', :nick => 'locks' do
-	bot.privmsg( "I shall go... but I shall return!" )
+bot.rule 'stop', :nick => 'locks' do |m|
+	bot.privmsg( m.nick, "I shall go... but I shall return!" )
 	bot.quit
 	exit
 end
